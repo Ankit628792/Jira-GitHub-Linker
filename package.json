@@ -2,8 +2,13 @@
   "name": "jira-github-linker",
   "displayName": "Jira & GitHub Linker",
   "description": "Turn Jira tickets (ABC-123) and GitHub issues (#456) into clickable links directly in VS Code via Hover and CodeLens.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "publisher": "Ankit628792",
+  "author": {
+    "name": "Ankit Kumar",
+    "username": "Ankit628792",
+    "url": "https://ak-portfolio.vercel.app"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ankit628792/Jira-GitHub-Linker.git"
