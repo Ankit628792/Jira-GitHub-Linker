@@ -1,16 +1,17 @@
-# jira-github-linker README
+# Jira & GitHub Linker
 
-This is the README for your extension "jira-github-linker". After writing up a brief description, we recommend including the following sections.
+A VS Code extension that turns Jira tickets, GitHub issues, and GitHub pull requests into clickable links directly in your code editor.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Jira Tickets**: Automatically detects and links Jira ticket references (e.g., `ABC-123`)
+- **GitHub Issues**: Automatically detects and links GitHub issue references (e.g., `#456`)
+- **GitHub Pull Requests**: Automatically detects and links GitHub PR references (e.g., `PR-789`)
+- **Hover Tooltips**: Hover over any reference to see clickable links
+- **CodeLens Actions**: Click actions above lines with references to open or copy URLs
+- **Keyboard Shortcuts**: Quick commands to copy URLs or open in browser
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+![Extension in action](media/jg-linker.png)
 
 ## Requirements
 
@@ -18,14 +19,41 @@ If you have any requirements or dependencies, add a section describing those and
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+* `jiraGithubLinker.jiraBaseUrl`: Base URL for Jira tickets (must end with `/browse/`)
+* `jiraGithubLinker.githubRepoUrl`: Base URL for GitHub repository (must end with `/`)
+* `jiraGithubLinker.enableHover`: Enable/disable hover tooltips (default: true)
+* `jiraGithubLinker.enableCodeLens`: Enable/disable CodeLens actions (default: true)
+
+### Example Configuration
+
+```json
+{
+    "jiraGithubLinker.jiraBaseUrl": "https://mycompany.atlassian.net/browse/",
+    "jiraGithubLinker.githubRepoUrl": "https://github.com/my-org/my-repo/",
+    "jiraGithubLinker.enableHover": true,
+    "jiraGithubLinker.enableCodeLens": true
+}
+```
+
+## Usage
+
+### Supported Formats
+
+- **Jira**: `ABC-123`, `PROJ-456`, `TASK-789`
+- **GitHub Issues**: `#123`, `#456`, `#789`
+- **GitHub Pull Requests**: `PR-123`, `PR-456`, `PR-789`
+
+### Commands
+
+- `Jira & GitHub Linker: Copy Ticket/Issue URL` - Copy the URL to clipboard
+- `Jira & GitHub Linker: Open Ticket/Issue in Browser` - Open the URL in your default browser
+
+### Keyboard Shortcuts
+
+- `Cmd+K Cmd+C` (macOS) / `Ctrl+K Ctrl+C` (Windows/Linux) - Copy URL
+- `Cmd+K Cmd+O` (macOS) / `Ctrl+K Ctrl+O` (Windows/Linux) - Open URL
 
 ## Known Issues
 

@@ -4,6 +4,10 @@
   "description": "Turn Jira tickets (ABC-123) and GitHub issues (#456) into clickable links directly in VS Code via Hover and CodeLens.",
   "version": "0.0.1",
   "publisher": "Ankit628792",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ankit628792/Jira-GitHub-Linker.git"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -27,8 +31,8 @@
         },
         "jiraGithubLinker.githubRepoUrl": {
           "type": "string",
-          "default": "https://github.com/org/repo/issues/",
-          "markdownDescription": "Base URL for GitHub issues. **Must end with** `/issues/`. Example: `https://github.com/my-org/my-repo/issues/`"
+          "default": "https://github.com/org/repo/",
+          "markdownDescription": "Base URL for GitHub repository. **Must end with** `/`. Example: `https://github.com/my-org/my-repo/`"
         },
         "jiraGithubLinker.enableHover": {
           "type": "boolean",
@@ -68,7 +72,7 @@
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "tsc -p .",
-    "watch": "tsc -watch -p .",
+    "watch": "tsc -p .",
     "package": "vsce package"
   },
   "devDependencies": {

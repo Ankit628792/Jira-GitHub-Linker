@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
 
-const JIRA_WORD = /^[A-Z][A-Z0-9]+-\d+$/;
+const JIRA_WORD = /^(?!PR-)[A-Z][A-Z0-9]+-\d+$/;
 const GITHUB_WORD = /^#\d+$/;
+const GITHUB_PR_WORD = /^PR-\d+$/;
 
-const JIRA_GLOBAL = /\b([A-Z][A-Z0-9]+-\d+)\b/g;
+const JIRA_GLOBAL = /\b((?!PR-)[A-Z][A-Z0-9]+-\d+)\b/g;
 const GITHUB_GLOBAL = /(^|\s)#(\d+)\b/g;
+const GITHUB_PR_GLOBAL = /\b(PR-(\d+))\b/g;
 
 function getConfig() {
 	const cfg = vscode.workspace.getConfiguration('jiraGithubLinker');
@@ -15,9 +17,8 @@ function getConfig() {
 		if (!jiraBase.endsWith('/')) jiraBase += '/';
 		if (!jiraBase.endsWith('browse/')) jiraBase += 'browse/';
 	}
-	if (githubBase && !githubBase.endsWith('/issues/')) {
-		if (!githubBase.endsWith('/')) githubBase += '/';
-		if (!githubBase.endsWith('issues/')) githubBase += 'issues/';
+	if (githubBase && !githubBase.endsWith('/')) {
+		githubBase += '/';
 	}
 
 	return {
@@ -36,7 +37,11 @@ function buildUrlsFromWord(word: string) {
 	}
 	if (GITHUB_WORD.test(word) && githubBase) {
 		const issue = word.replace('#', '');
-		results.push({ label: 'Open in GitHub', url: `${githubBase}${issue}` });
+		results.push({ label: 'Open in GitHub', url: `${githubBase}issues/${issue}` });
+	}
+	if (GITHUB_PR_WORD.test(word) && githubBase) {
+		const prNumber = word.replace('PR-', '');
+		results.push({ label: 'Open in GitHub', url: `${githubBase}pull/${prNumber}` });
 	}
 	return results;
 }
@@ -97,7 +102,7 @@ class TicketCodeLensProvider implements vscode.CodeLensProvider {
 			}));
 		}
 
-		// GitHub
+		// GitHub Issues
 		for (const m of text.matchAll(GITHUB_GLOBAL)) {
 			const issueNumber = m[2];
 			if (!issueNumber) continue;
@@ -109,7 +114,29 @@ class TicketCodeLensProvider implements vscode.CodeLensProvider {
 				lenses.push(new vscode.CodeLens(range, {
 					title: 'Open in GitHub',
 					command: 'vscode.open',
-					arguments: [vscode.Uri.parse(`${githubBase}${issueNumber}`)]
+					arguments: [vscode.Uri.parse(`${githubBase}issues/${issueNumber}`)]
+				}));
+			}
+			lenses.push(new vscode.CodeLens(range, {
+				title: 'Copy URL',
+				command: 'jiraGithubLinker.copyUrl',
+				arguments: [full]
+			}));
+		}
+
+		// GitHub Pull Requests
+		for (const m of text.matchAll(GITHUB_PR_GLOBAL)) {
+			const prNumber = m[2];
+			if (!prNumber) continue;
+			const full = `PR-${prNumber}`;
+			const start = document.positionAt(m.index! + m[0].indexOf('PR-'));
+			const end = start.translate(0, full.length);
+			const range = new vscode.Range(start, end);
+			if (githubBase) {
+				lenses.push(new vscode.CodeLens(range, {
+					title: 'Open in GitHub',
+					command: 'vscode.open',
+					arguments: [vscode.Uri.parse(`${githubBase}pull/${prNumber}`)]
 				}));
 			}
 			lenses.push(new vscode.CodeLens(range, {
@@ -162,7 +189,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 			let url = '';
 			if (JIRA_WORD.test(word) && cfg.jiraBase) url = `${cfg.jiraBase}${word}`;
-			else if (GITHUB_WORD.test(word) && cfg.githubBase) url = `${cfg.githubBase}${word.replace('#', '')}`;
+			else if (GITHUB_WORD.test(word) && cfg.githubBase) url = `${cfg.githubBase}issues/${word.replace('#', '')}`;
+			else if (GITHUB_PR_WORD.test(word) && cfg.githubBase) url = `${cfg.githubBase}pull/${word.replace('PR-', '')}`;
 
 			if (url) {
 				await vscode.env.clipboard.writeText(url);
@@ -182,7 +210,9 @@ export function activate(context: vscode.ExtensionContext) {
 			if (JIRA_WORD.test(word) && cfg.jiraBase)
 				vscode.env.openExternal(vscode.Uri.parse(`${cfg.jiraBase}${word}`));
 			else if (GITHUB_WORD.test(word) && cfg.githubBase)
-				vscode.env.openExternal(vscode.Uri.parse(`${cfg.githubBase}${word.replace('#', '')}`));
+				vscode.env.openExternal(vscode.Uri.parse(`${cfg.githubBase}issues/${word.replace('#', '')}`));
+			else if (GITHUB_PR_WORD.test(word) && cfg.githubBase)
+				vscode.env.openExternal(vscode.Uri.parse(`${cfg.githubBase}pull/${word.replace('PR-', '')}`));
 			else
 				vscode.window.showWarningMessage('No Jira/GitHub reference found or base URL not set.');
 		}),
