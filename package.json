@@ -1,51 +1,80 @@
 {
   "name": "jira-github-linker",
   "displayName": "Jira & GitHub Linker",
-  "description": "Turn Jira tickets (JIRA-123) and GitHub issues (#456) into clickable links directly in VS Code.",
-  "publisher": "Ankit628792",
+  "description": "Turn Jira tickets (ABC-123) and GitHub issues (#456) into clickable links directly in VS Code via Hover and CodeLens.",
   "version": "0.0.1",
+  "publisher": "Ankit628792",
   "engines": {
-    "vscode": "^1.103.0"
+    "vscode": "^1.85.0"
   },
   "categories": [
-    "Other",
-    "Productivity"
+    "Productivity",
+    "Other"
   ],
-  "activationEvents": [],
+  "icon": "media/jg-linker.png",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Jira & GitHub Linker",
+      "properties": {
+        "jiraGithubLinker.jiraBaseUrl": {
+          "type": "string",
+          "default": "https://company.atlassian.net/browse/",
+          "markdownDescription": "Base URL for Jira tickets. **Must end with** `/browse/`. Example: `https://mycompany.atlassian.net/browse/`"
+        },
+        "jiraGithubLinker.githubRepoUrl": {
+          "type": "string",
+          "default": "https://github.com/org/repo/issues/",
+          "markdownDescription": "Base URL for GitHub issues. **Must end with** `/issues/`. Example: `https://github.com/my-org/my-repo/issues/`"
+        },
+        "jiraGithubLinker.enableHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show hover tooltips with links for detected Jira/GitHub references."
+        },
+        "jiraGithubLinker.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show CodeLens actions above lines with detected Jira/GitHub references."
+        }
+      }
+    },
     "commands": [
       {
-        "command": "jira-github-linker.linkJiraAndGitHub",
-        "title": "Link Jira & GitHub"
+        "command": "jiraGithubLinker.copyUrl",
+        "title": "Jira & GitHub Linker: Copy Ticket/Issue URL"
+      },
+      {
+        "command": "jiraGithubLinker.openUrl",
+        "title": "Jira & GitHub Linker: Open Ticket/Issue in Browser"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "jiraGithubLinker.copyUrl",
+        "key": "cmd+k cmd+c",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "jiraGithubLinker.openUrl",
+        "key": "cmd+k cmd+o",
+        "when": "editorTextFocus"
       }
     ]
   },
   "scripts": {
-    "vscode:prepublish": "yarn run package",
-    "compile": "yarn run check-types && yarn run lint && node esbuild.js",
-    "watch": "npm-run-all -p watch:*",
-    "watch:esbuild": "node esbuild.js --watch",
-    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "yarn run check-types && yarn run lint && node esbuild.js --production",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src",
-    "test": "vscode-test"
+    "vscode:prepublish": "npm run build",
+    "build": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "package": "vsce package"
   },
   "devDependencies": {
-    "@types/vscode": "^1.103.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
-    "@typescript-eslint/eslint-plugin": "^8.39.0",
-    "@typescript-eslint/parser": "^8.39.0",
-    "eslint": "^9.32.0",
-    "esbuild": "^0.25.8",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.9.2",
-    "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0",
+    "vsce": "^2.15.0"
   }
 }

@@ -9,5 +9,9 @@
         "dist": true // set this to false to include "dist" folder in search results
     },
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-    "typescript.tsc.autoDetect": "off"
+    "typescript.tsc.autoDetect": "off",
+    "jiraGithubLinker.jiraBaseUrl": "https://mycompany.atlassian.net/browse/",
+    "jiraGithubLinker.githubRepoUrl": "https://github.com/my-org/my-repo/issues/",
+    "jiraGithubLinker.enableHover": true,
+    "jiraGithubLinker.enableCodeLens": true
 }
