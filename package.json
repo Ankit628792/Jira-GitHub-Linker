@@ -4,6 +4,7 @@
   "description": "Turn Jira tickets (ABC-123) and GitHub issues (#456) into clickable links directly in VS Code via Hover and CodeLens.",
   "version": "1.0.0",
   "publisher": "Ankit628792",
+  "license": "MIT",
   "author": {
     "name": "Ankit Kumar",
     "username": "Ankit628792",
